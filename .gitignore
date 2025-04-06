@@ -16,9 +16,6 @@ workdir/
 # Pytest cache
 .pytest_cache/
 
-# build directory
-build/
-
 # dist directory
 dist/
 
