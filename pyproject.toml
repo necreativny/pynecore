@@ -22,6 +22,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+
 #
 # Dependencies
 #
@@ -55,3 +56,18 @@ optional-dependencies.capitalcom = ["httpx", "pycryptodome"]
 #
 
 scripts.pyne = "pynecore.cli:app"
+
+
+#
+# URLs
+#
+
+[project.urls]
+"Homepage" = "https://pynecore.org"
+"Repository" = "https://github.com/pynesys/pynecore"
+"Documentation" = "https://pynecore.org/docs"
+"Issues" = "https://github.com/pynesys/pynecore/issues"
+
+# Social
+"X" = "https://x.com/pynesys"
+"Discord" = "https://discord.com/invite/7rhPbSqSG7"
