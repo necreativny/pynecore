@@ -1,0 +1,22 @@
+[2023-01-01T17:00:00.000-05:00]: map_int_keys size: 3
+[2023-01-01T17:00:00.000-05:00]: map_int_keys[1]: one
+[2023-01-01T17:00:00.000-05:00]: map_int_keys[2]: two
+[2023-01-01T17:00:00.000-05:00]: map_int_keys[3]: three
+[2023-01-01T17:00:00.000-05:00]: map_float_vals size: 3
+[2023-01-01T17:00:00.000-05:00]: map_float_vals[pi]: 3.14159
+[2023-01-01T17:00:00.000-05:00]: map_float_vals[e]: 2.71828
+[2023-01-01T17:00:00.000-05:00]: map_float_vals[sqrt2]: 1.41421
+[2023-01-01T17:00:00.000-05:00]: map_bool_vals size: 2
+[2023-01-01T17:00:00.000-05:00]: map_bool_vals[isTrue]: true
+[2023-01-01T17:00:00.000-05:00]: map_bool_vals[isFalse]: false
+[2023-01-01T17:00:00.000-05:00]: map_color_vals[red] == color.red: true
+[2023-01-01T17:00:00.000-05:00]: map_color_vals[green] == color.green: true
+[2023-01-01T17:00:00.000-05:00]: map_color_vals[blue] == color.blue: true
+[2023-01-01T17:00:00.000-05:00]: outer_map keys: [map1, map2]
+[2023-01-01T17:00:00.000-05:00]: inner_map1 from outer - a: 1
+[2023-01-01T17:00:00.000-05:00]: inner_map1 from outer - b: 2
+[2023-01-01T17:00:00.000-05:00]: map_with_arrays keys: [integers]
+[2023-01-01T17:00:00.000-05:00]: array from map size: 3
+[2023-01-01T17:00:00.000-05:00]: array from map[0]: 10
+[2023-01-01T17:00:00.000-05:00]: array from map[1]: 20
+[2023-01-01T17:00:00.000-05:00]: array from map[2]: 30

@@ -1,0 +1,28 @@
+[2023-01-01T17:00:00.000-05:00]: map.size(m): 0
+[2023-01-01T17:00:00.000-05:00]: Map contents - one: 1
+[2023-01-01T17:00:00.000-05:00]: Map contents - two: 2
+[2023-01-01T17:00:00.000-05:00]: Map contents - three: 3
+[2023-01-01T17:00:00.000-05:00]: map.size(m): 3
+[2023-01-01T17:00:00.000-05:00]: map.get(m, one): 1
+[2023-01-01T17:00:00.000-05:00]: map.get(m, two): 2
+[2023-01-01T17:00:00.000-05:00]: map.get(m, three): 3
+[2023-01-01T17:00:00.000-05:00]: map.contains(m, one): true
+[2023-01-01T17:00:00.000-05:00]: map.contains(m, four): false
+[2023-01-01T17:00:00.000-05:00]: Old value for one: 1
+[2023-01-01T17:00:00.000-05:00]: New value for one: 100
+[2023-01-01T17:00:00.000-05:00]: map.keys(m): [one, two, three]
+[2023-01-01T17:00:00.000-05:00]: map.values(m): [100, 2, 3]
+[2023-01-01T17:00:00.000-05:00]: m2 (copy of m) - one: 100
+[2023-01-01T17:00:00.000-05:00]: m2 (copy of m) - three: 3
+[2023-01-01T17:00:00.000-05:00]: m2 after adding four: 4
+[2023-01-01T17:00:00.000-05:00]: m2 size after adding four: 4
+[2023-01-01T17:00:00.000-05:00]: original m size: 3
+[2023-01-01T17:00:00.000-05:00]: Removed value: 2
+[2023-01-01T17:00:00.000-05:00]: m contains two after removing: false
+[2023-01-01T17:00:00.000-05:00]: map.size(m): 2
+[2023-01-01T17:00:00.000-05:00]: Removed non-existent value is na: true
+[2023-01-01T17:00:00.000-05:00]: m after put_all contains five: true with value: 5
+[2023-01-01T17:00:00.000-05:00]: m after put_all contains six: true with value: 6
+[2023-01-01T17:00:00.000-05:00]: m size after put_all: 4
+[2023-01-01T17:00:00.000-05:00]: m size after clear: 0
+[2023-01-01T17:00:00.000-05:00]: m contains one after clear: false

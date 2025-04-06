@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+venv/
+
+# PyPI configuration file
+.pypirc
+
+# Working directory
+workdir/
+
+# Pytest cache
+.pytest_cache/
+
+# build directory
+build/
+
+# dist directory
+dist/
+
+#
+# macOS
+#
+.DS_Store

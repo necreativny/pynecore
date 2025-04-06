@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "pynecore" = "src/pynecore" }
+packages.find = { where = ["src"] }
+
+[tool.distutils]
+egg_info.egg_base = "build"
+
+[project]
+name = "pynesys-pynecore"
+version = "6.0.0" # PineVersion.Major.Minor
+description = "Python based Pine Script runtime"
+authors = [{ name = "PyneSys LLC.", email = "adam@pynesys.io" }]
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License 2.0",
+    "Operating System :: OS Independent",
+]
+
+#
+# Dependencies
+#
+
+# No dependencies for core functionality, it has only a minimal CLI functionality
+dependencies = []
+
+# With user-friendly CLI
+optional-dependencies.cli = ["typer", "rich"]
+
+# All optional dependencies for cli and all built-in providers
+optional-dependencies.all = ["typer", "rich", "httpx", "ccxt", "pycryptodome"]
+
+#Optional dependencies for development
+optional-dependencies.dev = ["pytest", "pytest-spec"]
+
+### Providers
+
+# For all providers to work (CCXT, Capital.com)
+optional-dependencies.providers = ["httpx", "ccxt", "pycryptodome"]
+
+# For CCXT provider to work
+optional-dependencies.ccxt = ["ccxt"]
+
+# For Capital.com provider to work
+optional-dependencies.capitalcom = ["httpx", "pycryptodome"]
+
+
+#
+# Commands
+#
+
+scripts.pyne = "pynecore.cli:app"

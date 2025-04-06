@@ -1,0 +1,110 @@
+[symbol]
+prefix = "CAPITALCOM"
+description = "EUR/USD"
+ticker = "EURUSD"
+currency = "USD"
+basecurrency = "EUR"
+period = "5"
+type = "forex"
+mintick = 0.00001000
+pricescale = 100000
+minmove = 1.00000000
+pointvalue = 1
+timezone = "US/Eastern"
+volumetype = "base"
+avg_spread = 0.00007306
+#taker_fee =
+#maker_fee =
+
+# Opening hours
+[[opening_hours]]
+day = 0
+start = "00:00:00"
+end = "16:59:50"
+
+[[opening_hours]]
+day = 0
+start = "17:05:00"
+end = "00:00:00"
+
+[[opening_hours]]
+day = 1
+start = "00:00:00"
+end = "16:59:50"
+
+[[opening_hours]]
+day = 1
+start = "17:05:00"
+end = "00:00:00"
+
+[[opening_hours]]
+day = 2
+start = "00:00:00"
+end = "16:59:50"
+
+[[opening_hours]]
+day = 2
+start = "17:05:00"
+end = "00:00:00"
+
+[[opening_hours]]
+day = 3
+start = "00:00:00"
+end = "16:59:50"
+
+[[opening_hours]]
+day = 3
+start = "17:05:00"
+end = "00:00:00"
+
+[[opening_hours]]
+day = 4
+start = "00:00:00"
+end = "16:59:50"
+
+[[opening_hours]]
+day = 6
+start = "17:00:00"
+end = "00:00:00"
+
+# Session starts
+[[session_starts]]
+day = 0
+time = "17:05:00"
+
+[[session_starts]]
+day = 1
+time = "17:05:00"
+
+[[session_starts]]
+day = 2
+time = "17:05:00"
+
+[[session_starts]]
+day = 3
+time = "17:05:00"
+
+[[session_starts]]
+day = 6
+time = "17:00:00"
+
+# Session ends
+[[session_ends]]
+day = 0
+time = "16:59:50"
+
+[[session_ends]]
+day = 1
+time = "16:59:50"
+
+[[session_ends]]
+day = 2
+time = "16:59:50"
+
+[[session_ends]]
+day = 3
+time = "16:59:50"
+
+[[session_ends]]
+day = 4
+time = "16:59:50"
