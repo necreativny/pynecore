@@ -12,8 +12,8 @@ egg_info.egg_base = "build"
 [project]
 name = "pynesys-pynecore"
 version = "6.0.0" # PineVersion.Major.Minor
-description = "Python based Pine Script runtime"
-authors = [{ name = "PyneSys LLC.", email = "adam@pynesys.io" }]
+description = "Python based Pine Script like runtime"
+authors = [{ name = "PyneSys LLC.", email = "hello@pynesys.com" }]
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
