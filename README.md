@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://pynecore.org/logo/logo.svg" alt="PyneCore Logo">
+<img src="https://raw.githubusercontent.com/PyneSys/pynecore/refs/heads/main/docs/logo.svg" alt="PyneCore Logo">
 <h1>PyneCore™</h1>
 <strong>Pine Script in Python - Without Limitations</strong>
 
