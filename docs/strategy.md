@@ -8,6 +8,8 @@ date: "2025-03-31"
 lastmod: "2025-03-31"
 draft: false
 toc: true
+categories: ["Usage", "Strategy"]
+tags: ["strategies", "backtesting", "trading", "examples", "position-sizing", "best-practices"]
 ---
 -->
 

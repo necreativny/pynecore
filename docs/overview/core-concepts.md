@@ -3,11 +3,13 @@
 weight: 103
 title: "Core Concepts"
 description: "Fundamental concepts and mechanisms of PyneCore"
-icon: "psychology_alt" # Using a related icon
-date: "2025-03-31" # Using the date from rules, adjust if needed
-lastmod: "2025-03-31" # Using the date from rules, adjust if needed
+icon: "psychology_alt"
+date: "2025-03-31"
+lastmod: "2025-03-31"
 draft: false
 toc: true
+categories: ["Overview", "Fundamentals"]
+tags: ["ast", "series", "persistent", "function-isolation", "na-values", "core-concepts"]
 ---
 -->
 

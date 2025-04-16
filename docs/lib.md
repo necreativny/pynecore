@@ -8,6 +8,8 @@ date: "2025-03-31"
 lastmod: "2025-03-31"
 draft: false
 toc: true
+categories: ["API Reference", "Library"]
+tags: ["api", "library", "functions", "modules", "indicators", "technical-analysis"]
 ---
 -->
 

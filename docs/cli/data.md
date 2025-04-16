@@ -8,6 +8,8 @@ date: "2025-04-03"
 lastmod: "2025-04-03"
 draft: false
 toc: true
+categories: ["Usage", "CLI", "Data Handling"]
+tags: ["data", "ohlcv", "download", "conversion", "ccxt", "csv", "json"]
 ---
 -->
 

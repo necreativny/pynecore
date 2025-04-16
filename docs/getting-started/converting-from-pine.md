@@ -8,6 +8,8 @@ date: "2025-03-31"
 lastmod: "2025-03-31"
 draft: false
 toc: true
+categories: ["Getting Started", "Migration"]
+tags: ["conversion", "pine-script", "migration", "examples", "syntax", "translation"]
 ---
 -->
 

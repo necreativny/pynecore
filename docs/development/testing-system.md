@@ -8,6 +8,8 @@ date: "2025-03-31"
 lastmod: "2025-03-31"
 draft: false
 toc: true
+categories: ["Development", "Testing"]
+tags: ["testing", "pytest", "infrastructure", "quality-assurance", "ast", "reference-data"]
 ---
 -->
 
