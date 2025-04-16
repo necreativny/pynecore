@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from typing import cast
+from typing import cast, Any
 import ast
 import json
 from pathlib import Path
@@ -14,7 +14,7 @@ class ModulePropertyCollector:
         self.project_root = self._find_project_root()
         self.lib_path = self.project_root / 'pynecore' / 'lib'
         self.json_path = self.project_root / 'pynecore' / 'transformers' / 'module_properties.json'
-        self.module_info: dict[str, dict[str, dict[str, any]]] = {}
+        self.module_info: dict[str, dict[str, dict[str, Any]]] = {}
 
     @staticmethod
     def _find_project_root() -> Path:
@@ -79,7 +79,7 @@ class ModulePropertyCollectorTransformer(ast.NodeTransformer):
 
     def __init__(self, module_path: str):
         self.module_path = module_path
-        self.current_module_info: dict[str, dict[str, any]] = {}
+        self.current_module_info: dict[str, dict[str, Any]] = {}
         self.in_class = False
 
     def visit_ClassDef(self, node: ast.ClassDef) -> ast.AST:
