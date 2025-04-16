@@ -69,7 +69,7 @@ pyne data download --help
 
 ```bash
 # List all available symbols from CCXT provider
-pyne data download ccxt --list-symbols
+pyne data download ccxt --list-symbols --symbol BYBIT  # Note, here we specify the exchange as symbol
 
 # Download Bitcoin daily data from CCXT, continuing from last download
 pyne data download ccxt --symbol "BINANCE:BTC/USDT" --timeframe "1D"
@@ -119,6 +119,20 @@ You can view this information with the `--symbol-info` flag:
 ```bash
 pyne data download ccxt --symbol "BINANCE:BTC/USDT" --timeframe "1D" --symbol-info
 ```
+
+### Listing Symbols
+
+To list all available symbols for a provider, use:
+```bash
+pyne data download PROVIDER --list-symbols
+```
+
+Some providers support multiple exchanges, such as CCXT. In this case, you need to specify the exchange name in the `--symbol` option:
+
+```bash
+pyne data download ccxt --list-symbols --symbol BYBIT
+```
+
 
 ## Converting Data Formats
 
