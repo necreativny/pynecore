@@ -1,4 +1,13 @@
-from typing import override, Callable
+from typing import Callable
+import sys
+
+# Import the override decorator for Python 3.12+
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    # An empty decorator for Python 3.11 and below
+    def override(func):
+        return func
 from datetime import datetime, time, UTC, timedelta
 from zoneinfo import ZoneInfo
 from pathlib import Path

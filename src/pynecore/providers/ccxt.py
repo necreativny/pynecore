@@ -1,4 +1,13 @@
-from typing import Callable, override
+from typing import Callable
+import sys
+
+# Python 3.12+ esetén importáljuk az override dekorátort
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    # Python 3.11 és alatta egy üres dekorátor
+    def override(func):
+        return func
 import re
 from datetime import datetime, UTC, timedelta
 from pathlib import Path
