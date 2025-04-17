@@ -215,7 +215,7 @@ def change(source: Series[TFIB], length: int = 1) -> TFIB | NA[TFIB]:
     assert length > 0, "Invalid length, length must be greater than 0!"
     prev_val = source[length]
     if isinstance(source, NA) or isinstance(prev_val, NA):
-        return NA(cast(type[TFIB], type(source)))
+        return NA(cast(type[TFIB], type(source)))  # type: ignore
     if isinstance(source, (float, int)):
         return cast(TFIB, source - prev_val)
     return source != prev_val
@@ -843,7 +843,7 @@ def median(source: Series[TFI], length: int) -> TFI | NA[TFI] | Series[TFI]:
         return source
 
     if isinstance(source, NA):
-        return NA(cast(type[TFI], type(source)))
+        return NA(cast(type[TFI], type(source)))  # type: ignore
 
     # Store heaps and window
     heap_low: Persistent[list[TFI]] = []  # Max heap (negative values)
@@ -879,7 +879,7 @@ def median(source: Series[TFI], length: int) -> TFI | NA[TFI] | Series[TFI]:
 
     # Return na during warmup
     if len(window) < length:
-        return NA(cast(type[TFI], type(source)))
+        return NA(cast(type[TFI], type(source)))  # type: ignore
 
     # Return median based on heap sizes
     if len(heap_low) > len(heap_high):
@@ -1118,7 +1118,13 @@ def pivothigh(leftbars: int, rightbars: int) -> float | NA[float]:
     :param rightbars: Right strength.
     :return: True if the source series is a pivot high
     """
-    return pivothigh(float(high), leftbars, rightbars)  # type: ignore
+    try:
+        return pivothigh(float(high), leftbars, rightbars)  # type: ignore
+    except TypeError:
+        if isinstance(high, NA):
+            return NA(float)
+        else:
+            raise
 
 
 @overload
@@ -1156,7 +1162,13 @@ def pivotlow(leftbars: int, rightbars: int) -> float | NA[float]:
     :param rightbars: Right strength.
     :return: True if the source series is a pivot low
     """
-    return pivotlow(float(low), leftbars, rightbars)  # type: ignore
+    try:
+        return pivotlow(float(low), leftbars, rightbars)  # type: ignore
+    except TypeError:
+        if isinstance(low, NA):
+            return NA(float)
+        else:
+            raise
 
 
 # noinspection PyUnusedLocal
@@ -1490,7 +1502,7 @@ def stoch(source: float | Series[float], high: float | Series[float], low: float
             k = 100.0 if k > 100.0 else 0.0 if k < 0.0 else k
         except ZeroDivisionError:  # I don't think this is possible
             k = NA(float)
-    return k
+    return k  # type: ignore
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -1601,7 +1613,7 @@ def tr(handle_na: bool = False) -> float | NA[float] | Series[float]:
         val = builtins.max(high - low, abs(high - prev_close), abs(low - prev_close))
 
     prev_close = close
-    return val
+    return val  # type: ignore
 
 
 @export
@@ -1837,7 +1849,7 @@ def wma(source: Series[float], length: int) -> float | NA[float]:
     except ZeroDivisionError:
         val = NA(float)
 
-    return val
+    return val  # type: ignore
 
 
 @export

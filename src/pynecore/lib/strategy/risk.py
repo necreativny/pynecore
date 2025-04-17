@@ -1,4 +1,4 @@
-from ...types.na import NA, NA
+from ...types.na import NA
 from .. import strategy
 
 from ... import lib

@@ -401,7 +401,9 @@ def log_comparator(capsys) -> LogComparatorProtocol:
             print(output.out, flush=True, end='')
 
             # Compare all lines
+            line = 0
             for good_line, test_line in zip(good_log.splitlines(), test_log.splitlines()):
+                line += 1
                 good_line = good_line.strip()
                 test_line = test_line.strip()
                 if not good_line or not test_line:
@@ -411,17 +413,17 @@ def log_comparator(capsys) -> LogComparatorProtocol:
                     if compare_dates:
                         good_date = datetime.fromisoformat(good_line.split(']', 1)[0].strip('['))
                         test_date = datetime.fromisoformat(test_line.split(']', 1)[0].strip('['))
-                        assert good_date == test_date, "Dates are not equal!"
+                        assert good_date == test_date, f"Dates are not equal! Line: {line}"
 
                     # Round numbers in arrays and compare messages
                     good_msg = round_numbers_in_array(good_line.split(']:', 1)[1].strip(), float_precision)
                     test_msg = round_numbers_in_array(test_line.split(']', 1)[1][9:].strip(), float_precision)
-                    assert good_msg == test_msg, "Messages are not equal!"
+                    assert good_msg == test_msg, f"Messages are not equal! Line: {line}"
 
                 except IndexError:
                     print("The stderr output of the test:")
                     print(test_log)
-                    raise ValueError("The log output is not in the expected format!")
+                    raise ValueError(f"The log output is not in the expected format! Line: {line}")
 
         finally:
             # Restore pytest handlers

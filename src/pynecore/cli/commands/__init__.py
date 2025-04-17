@@ -2,7 +2,10 @@ import sys
 from pathlib import Path
 
 import typer
+
 from ..app import app, app_state
+from ..utils.error_hook import setup_global_error_logging
+
 from ...providers import available_providers
 
 # Import commands
@@ -121,3 +124,6 @@ def main(
 
     # Set workdir in app_state
     app_state.workdir = workdir
+
+    # Setup global error logging
+    setup_global_error_logging(workdir / "output" / "logs" / "error.log")

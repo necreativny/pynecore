@@ -335,21 +335,27 @@ def sum(source: Series[TFI | NA[TFI]], length: int) -> float | NA[float] | Serie
     :return: The sliding sum of the series
     """
     global __series_summ_source__, __persistent_summ_summ__, __persistent_summ_count__
-    __series_summ_source__.add(source)
 
-    assert length > 0, "Invalid length, length must be greater than 0!"
     if length == 1:  # Shortcut
         return source
-    if isinstance(source, NA):
-        return NA(float)
+    assert length > 0, "Invalid length, length must be greater than 0!"
+
+    isna = isinstance(source, NA)
+    if not isna:
+        __series_summ_source__.add(source)
 
     if __persistent_summ_count__ < length - 1:
-        __persistent_summ_count__ += 1
-        __persistent_summ_summ__ += source
+        if not isna:
+            __persistent_summ_count__ += 1
+            __persistent_summ_summ__ += source
         return NA(float)
     elif __persistent_summ_count__ == length - 1:
+        if isna:
+            return NA(float)
         __persistent_summ_count__ += 1
     else:
+        if isna:
+            return __persistent_summ_summ__
         __persistent_summ_summ__ -= float(__series_summ_source__[length])
 
     __persistent_summ_summ__ += source

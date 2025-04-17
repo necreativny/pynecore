@@ -15,6 +15,7 @@ from pynecore.transformers.series import SeriesTransformer
 from pynecore.transformers.persistent import PersistentTransformer
 from pynecore.transformers.function_isolation import FunctionIsolationTransformer
 from pynecore.transformers.input_transformer import InputTransformer
+from pynecore.transformers.safe_convert_transformer import SafeConvertTransformer
 
 
 class PyneLoader(importlib.machinery.SourceFileLoader):
@@ -51,6 +52,7 @@ class PyneLoader(importlib.machinery.SourceFileLoader):
             transformed = SeriesTransformer().visit(transformed)
             transformed = PersistentTransformer().visit(transformed)
             transformed = InputTransformer().visit(transformed)
+            transformed = SafeConvertTransformer().visit(transformed)
 
             ast.fix_missing_locations(transformed)
 

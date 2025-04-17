@@ -39,7 +39,7 @@ class NA(Generic[T]):
         """
         if self.type is None:
             return "NA"
-        return f"NA[{self.type.__name__}]"
+        return f"NA[{self.type.__name__}]"  # type: ignore
 
     def __str__(self) -> str:
         """
@@ -54,10 +54,12 @@ class NA(Generic[T]):
         return hash(self.type)
 
     def __int__(self) -> NA[int]:
-        return NA(int)
+        # We solve this with an AST Transformer
+        raise TypeError("NA cannot be converted to int")
 
     def __float__(self) -> NA[float]:
-        return NA(float)
+        # We solve this with an AST Transformer
+        raise TypeError("NA cannot be converted to float")
 
     def __bool__(self) -> bool:
         return False
