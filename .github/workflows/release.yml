@@ -5,7 +5,7 @@ on:
     types: [published]
 
 permissions:
-  contents: read
+  contents: write
   id-token: write  # Required for trusted publishing
 
 jobs:
@@ -29,3 +29,37 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
+
+      - name: Bump version after release
+        run: |
+          # More robust version search
+          VERSION_LINE=$(grep -m1 "^version\s*=" pyproject.toml)
+          if [ -z "$VERSION_LINE" ]; then
+            echo "Version line not found in pyproject.toml"
+            exit 1
+          fi
+
+          # Extracting version between quotes
+          VERSION=$(echo "$VERSION_LINE" | sed -E 's/version\s*=\s*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+          echo "Current version: $VERSION"
+
+          # Version components
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+          echo "Bumping to: $NEW_VERSION"
+
+          # New version writing, with flexible pattern matching
+          sed -i "s/^version\s*=\s*\"[0-9]\+\.[0-9]\+\.[0-9]\+\"/version = \"$NEW_VERSION\"/" pyproject.toml
+
+      - name: Commit and push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml
+          git commit -m "Bump version after release [skip ci]"
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
