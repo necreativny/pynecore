@@ -62,9 +62,21 @@ def run(
         secho(f"Script file '{script}' not found!", fg="red", err=True)
         raise Exit(1)
 
-    # Ensure .ohlcv extension
-    if data.suffix != ".ohlcv":
+    # Check file format and extension
+    if data.suffix == "":
+        # No extension, add .ohlcv
         data = data.with_suffix(".ohlcv")
+    elif data.suffix != ".ohlcv":
+        # Has extension but not .ohlcv
+        secho(f"Cannot run with '{data.suffix}' files. The PyneCore runtime requires .ohlcv format.",
+              fg="red", err=True)
+        secho("If you're trying to use a different data format, please convert it first:", fg="red")
+        symbol_placeholder = "YOUR_SYMBOL"
+        timeframe_placeholder = "YOUR_TIMEFRAME"
+        secho(f"pyne data convert-from {data} --symbol {symbol_placeholder} --timeframe {timeframe_placeholder}",
+              fg="yellow")
+        raise Exit(1)
+
     # Expand data path
     if len(data.parts) == 1:
         data = app_state.data_dir / data
