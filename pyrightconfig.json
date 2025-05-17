@@ -5,6 +5,9 @@
    "extraPaths": [
       "src"
    ],
+   "ignore": [
+      "**/tests/"
+   ],
    "reportIndexIssue": "none",
    "typeCheckingMode": "basic",
    "reportUnknownMemberType": "none",
