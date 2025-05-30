@@ -137,7 +137,7 @@ def __test_capitalcom_real_data_download__(tmp_path):
             # Verify minimal required configuration exists
             required_keys = ['user_email', 'api_key', 'api_password']
             for key in required_keys:
-                if key not in config['capitalcom']:
+                if key not in config['capitalcom'] or not config['capitalcom'][key]:
                     pytest.skip(f"Missing required key '{key}' in capitalcom configuration")
     except Exception as e:
         pytest.skip(f"Error reading providers.toml: {str(e)}")
