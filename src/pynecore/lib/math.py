@@ -11,6 +11,7 @@ from . import syminfo
 
 from ..core.series import SeriesImpl as _SeriesImpl
 from ..core.random import PineRandom as _PineRandom
+from ..core import safe_convert
 
 TFI = TypeVar('TFI', float, int)
 
@@ -356,7 +357,7 @@ def sum(source: Series[TFI | NA[TFI]], length: int) -> float | NA[float] | Serie
     else:
         if isna:
             return __persistent_summ_summ__
-        __persistent_summ_summ__ -= float(__series_summ_source__[length])
+        __persistent_summ_summ__ -= safe_convert.safe_float(__series_summ_source__[length])
 
     __persistent_summ_summ__ += source
 

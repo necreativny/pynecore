@@ -16,6 +16,7 @@ from ..utils.export import export
 
 # We need to use this kind of import to make transformer work
 from pynecore.lib import open, high, low, close, volume, bar_index, array, session, math as lib_math
+from ..core import safe_convert
 
 TFIB = TypeVar('TFIB', float, int, bool)
 TFI = TypeVar('TFI', float, int)
@@ -1119,7 +1120,7 @@ def pivothigh(leftbars: int, rightbars: int) -> float | NA[float]:
     :return: True if the source series is a pivot high
     """
     try:
-        return pivothigh(float(high), leftbars, rightbars)  # type: ignore
+        return pivothigh(safe_convert.safe_float(high), leftbars, rightbars)  # type: ignore
     except TypeError:
         if isinstance(high, NA):
             return NA(float)
@@ -1163,7 +1164,7 @@ def pivotlow(leftbars: int, rightbars: int) -> float | NA[float]:
     :return: True if the source series is a pivot low
     """
     try:
-        return pivotlow(float(low), leftbars, rightbars)  # type: ignore
+        return pivotlow(safe_convert.safe_float(low), leftbars, rightbars)  # type: ignore
     except TypeError:
         if isinstance(low, NA):
             return NA(float)

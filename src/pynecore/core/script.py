@@ -14,10 +14,12 @@ import pynecore.lib.display as _display
 from pynecore.types import script_type as _script_type
 from pynecore.types.series import Series
 from pynecore.types.color import Color
+from pynecore.types.na import NA
 
 __all__ = ['script', 'input']
 
 from pynecore.types.source import Source
+from . import safe_convert
 
 
 @dataclass(kw_only=True)
@@ -504,14 +506,14 @@ class _Input:
             group=group,
             display=display,
         )
-        return defval if _id not in old_input_values else int(old_input_values[_id])
+        return defval if _id not in old_input_values else safe_convert.safe_int(old_input_values[_id])
 
     @classmethod
     def _int(cls, defval: int, title: str | None = None, *,
              minval: int | None = None, maxval: int | None = None, step: int | None = None,
              tooltip: str | None = None, inline: bool | None = False, group: str | None = None,
              confirm: bool | None = False, options: tuple[int] | None = None,
-             display: _display.Display | None = None, _id: str | None = None, **__) -> int:
+             display: _display.Display | None = None, _id: str | None = None, **__) -> int | NA[int]:
         """
         Adds an input to your script's settings, which allows you to provide configuration options
         to script users. This function adds a field for an integer input to the script's inputs.
@@ -545,7 +547,7 @@ class _Input:
             options=options,
             display=display,
         )
-        return defval if _id not in old_input_values else int(old_input_values[_id])
+        return defval if _id not in old_input_values else safe_convert.safe_int(old_input_values[_id])
 
     @classmethod
     def _bool(cls, defval: bool, title: str | None = None, *,
@@ -584,7 +586,7 @@ class _Input:
                tooltip: str | None = None, inline: bool | None = False, group: str | None = None,
                confirm: bool | None = False, options: tuple[int] | None = None,
                minval: float | None = None, maxval: float | None = None, step: float | None = None,
-               display: _display.Display | None = None, _id: str | None = None, **__) -> float:
+               display: _display.Display | None = None, _id: str | None = None, **__) -> float | NA[float]:
         """
         Adds an input to your script's settings, which allows you to provide configuration options
         to script users. This function adds a field for a float input to the script's inputs.
@@ -618,7 +620,7 @@ class _Input:
             options=options,
             display=display,
         )
-        return defval if _id not in old_input_values else float(old_input_values[_id])
+        return defval if _id not in old_input_values else safe_convert.safe_float(old_input_values[_id])
 
     @classmethod
     def string(cls, defval: str, title: str | None = None, *,

@@ -13,6 +13,7 @@ from ..types.format import Format
 from . import format as _format
 from . import syminfo as _syminfo
 from .. import lib
+from ..core import safe_convert
 
 from pynecore.core.datetime import parse_timezone as _parse_timezone
 
@@ -300,7 +301,7 @@ def format(formatString: str, *args: Any) -> str:
 
         if len(parts) >= 2 and parts[1] == 'number':
             if len(parts) >= 3:
-                return _format_number(float(value),
+                return _format_number(safe_convert.safe_float(value),
                                       fmt_type=parts[2] if parts[2] in (
                                           'integer', 'currency',
                                           _format.percent,
@@ -310,7 +311,7 @@ def format(formatString: str, *args: Any) -> str:
                                           _format.inherit
                                       ) else '',
                                       precision=parts[2])
-            return _format_number(float(value))
+            return _format_number(safe_convert.safe_float(value))
 
         return _format_value(value)
 
@@ -540,8 +541,8 @@ def tostring(value: int | float | str | bool | NA, fmt: str | Format = '#.######
         return value
     if isinstance(value, (int, float)):
         if isinstance(fmt, Format):
-            return _format_number(float(value), fmt_type=fmt)
-        return _format_number(float(value), precision=fmt)
+            return _format_number(safe_convert.safe_float(value), fmt_type=fmt)
+        return _format_number(safe_convert.safe_float(value), precision=fmt)
     return str(value)
 
 
