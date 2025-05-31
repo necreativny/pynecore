@@ -18,7 +18,7 @@ def method(func: Callable) -> Callable:
 
 
 # noinspection PyShadowingNames
-def method_call(method: str | Callable, var: Any, *args, **kwargs):
+def method_call(method: str | Callable, var: Any, *args, **kwargs) -> Any:
     global __scope_id__
 
     # If method is a string
@@ -38,3 +38,5 @@ def method_call(method: str | Callable, var: Any, *args, **kwargs):
     # It is a local method, it should be a local function
     elif callable(method):
         return isolate_function(method, '__method_call__', __scope_id__)(var, *args, **kwargs)
+
+    return None
