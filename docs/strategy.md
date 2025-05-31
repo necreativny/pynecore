@@ -15,7 +15,9 @@ tags: ["strategies", "backtesting", "trading", "examples", "position-sizing", "b
 
 # Strategy Development with PyneCore
 
-This guide introduces you to creating and testing trading strategies using PyneCore. As PyneCore maintains full compatibility with Pine Script's strategy functionality, this document focuses on the basics with links to TradingView's official documentation for detailed reference.
+This guide introduces you to creating and testing trading strategies using PyneCore. As PyneCore maintains full
+compatibility with Pine Script's strategy functionality, this document focuses on the basics with links to TradingView's
+official documentation for detailed reference.
 
 ## Creating a Strategy
 
@@ -27,6 +29,7 @@ In PyneCore, creating a strategy starts with a script decorated with `@script.st
 """
 from pynecore import Series, Persistent
 from pynecore.lib import script, close, ta, strategy
+
 
 @script.strategy("Simple MA Crossover", overlay=True)
 def main():
@@ -47,18 +50,20 @@ The `@script.strategy` decorator accepts numerous parameters to configure backte
 ```python
 @script.strategy(
     "Advanced Strategy Settings",
-    initial_capital=10000,              # Starting capital
+    initial_capital=10000,  # Starting capital
     commission_type=strategy.commission.percent,  # Commission type
-    commission_value=0.1,               # Commission value (0.1%)
-    pyramiding=1,                       # Max number of entries in same direction
+    commission_value=0.1,  # Commission value (0.1%)
+    pyramiding=1,  # Max number of entries in same direction
     default_qty_type=strategy.percent,  # Position sizing method
-    default_qty_value=10,               # Size value (10% of equity)
+    default_qty_value=10,  # Size value (10% of equity)
 )
 ```
 
 ### Configuration with TOML Files
 
-One of the powerful features of PyneCore is that strategy settings can be modified without changing the code. When you run a strategy, PyneCore automatically generates a `.toml` configuration file with the same base name as your strategy script. For example, if your strategy is `mystrategy.py`, PyneCore will create `mystrategy.toml`.
+One of the powerful features of PyneCore is that strategy settings can be modified without changing the code. When you
+run a strategy, PyneCore automatically generates a `.toml` configuration file with the same base name as your strategy
+script. For example, if your strategy is `mystrategy.py`, PyneCore will create `mystrategy.toml`.
 
 This TOML file contains all strategy settings and input parameters, allowing you to:
 
@@ -89,12 +94,12 @@ pyramiding = 1
 value = 12
 ```
 
-Simply edit this file and run your strategy again - PyneCore will use the updated values without requiring any code changes. This is extremely useful for:
+Simply edit this file and run your strategy again - PyneCore will use the updated values without requiring any code
+changes. This is extremely useful for:
 
 - Testing different parameter combinations
 - Optimizing strategies
 - Running the same strategy with different settings for various markets
-
 
 ## Strategy Entry and Exit
 
@@ -124,7 +129,9 @@ strategy.close_all()
 strategy.exit("Exit", "Long", profit=100, loss=50)
 ```
 
-For more detailed information on entries and exits, refer to [Pine Script strategy.entry](https://www.tradingview.com/pine-script-reference/v6/#fun_strategy{dot}entry) and [strategy.exit](https://www.tradingview.com/pine-script-reference/v6/#fun_strategy{dot}exit).
+For more detailed information on entries and exits, refer
+to [Pine Script strategy.entry](https://www.tradingview.com/pine-script-reference/v6/#fun_strategy{dot}entry)
+and [strategy.exit](https://www.tradingview.com/pine-script-reference/v6/#fun_strategy{dot}exit).
 
 ## Position Sizing
 
@@ -133,10 +140,8 @@ PyneCore supports various position sizing methods:
 ```python
 # Fixed size (specific quantity)
 @script.strategy("Fixed Size", default_qty_type=strategy.fixed, default_qty_value=1)
-
 # Percentage of equity
 @script.strategy("Percent of Equity", default_qty_type=strategy.percent, default_qty_value=10)
-
 # Cash amount
 @script.strategy("Cash Amount", default_qty_type=strategy.cash, default_qty_value=1000)
 ```
@@ -180,12 +185,13 @@ if strategy.opentrades > 0:
 @pyne
 """
 from pynecore import Series
-from pynecore.lib import script, close, ta, strategy, plot, color
+from pynecore.lib import script, close, ta, strategy, plot, color, input
+
 
 @script.strategy("MA Crossover Strategy", overlay=True)
 def main(
-    fast_length: int = input.int(9, title="Fast MA Length", minval=1),
-    slow_length: int = input.int(21, title="Slow MA Length", minval=1)
+        fast_length: int = input.int(9, title="Fast MA Length", minval=1),
+        slow_length: int = input.int(21, title="Slow MA Length", minval=1)
 ):
     # Calculate indicators
     fast_ma: Series[float] = ta.sma(close, fast_length)
@@ -213,13 +219,14 @@ def main(
 @pyne
 """
 from pynecore import Series
-from pynecore.lib import script, close, ta, strategy, plot, color
+from pynecore.lib import script, close, ta, strategy, input
+
 
 @script.strategy("RSI Mean Reversion", overlay=True)
 def main(
-    rsi_length: int = input.int(14, title="RSI Length", minval=1),
-    overbought: int = input.int(70, title="Overbought Level"),
-    oversold: int = input.int(30, title="Oversold Level")
+        rsi_length: int = input.int(14, title="RSI Length", minval=1),
+        overbought: int = input.int(70, title="Overbought Level"),
+        oversold: int = input.int(30, title="Oversold Level")
 ):
     # Calculate RSI
     rsi_value: Series[float] = ta.rsi(close, rsi_length)
@@ -260,21 +267,24 @@ pyne run mystrategy.py data/eurusd_daily.ohlcv
 
 This executes your strategy on the provided price data and generates backtest results in the output directory.
 
-While PyneCore's backtesting capabilities are already powerful and Pine Script-compatible, future versions will offer enhanced analysis and visualization tools designed specifically for Python users.
+While PyneCore's backtesting capabilities are already powerful and Pine Script-compatible, future versions will offer
+enhanced analysis and visualization tools designed specifically for Python users.
 
 ## Best Practices
 
 ### 1. Mind the Look-Ahead Bias and Indexing
 
-Ensure your strategy only uses data that would have been available at the time of the trading decision. In PyneCore, similar to Pine Script, indices refer to historical data where larger indices indicate older bars:
+Ensure your strategy only uses data that would have been available at the time of the trading decision. In PyneCore,
+similar to Pine Script, indices refer to historical data where larger indices indicate older bars:
 
 ```python
 current = close[0]  # Current bar (or just `close`)
 previous = close[1]  # One bar ago
-older = close[10]    # Ten bars ago
+older = close[10]  # Ten bars ago
 ```
 
-Note that PyneCore does not support negative indices - attempting to use them (like `close[-1]`) will raise an `IndexError` as there's no way to reference future data in the backtest.
+Note that PyneCore does not support negative indices - attempting to use them (like `close[-1]`) will raise an
+`IndexError` as there's no way to reference future data in the backtest.
 
 ### 2. Test Strategy Robustness
 
@@ -297,4 +307,6 @@ Begin with simpler strategies before adding complexity:
 - [Pine Script Strategy Documentation](https://www.tradingview.com/pine-script-docs/concepts/strategies/)
 - [Pine Script Library Reference](https://www.tradingview.com/pine-script-reference/v6/)
 
-As PyneCore continues to evolve, additional strategy development features and backtesting capabilities will be added. The project welcomes community contributions to enhance these capabilities further while maintaining full compatibility with Pine Script.
+As PyneCore continues to evolve, additional strategy development features and backtesting capabilities will be added.
+The project welcomes community contributions to enhance these capabilities further while maintaining full compatibility
+with Pine Script.
