@@ -117,6 +117,8 @@ pip install pynesys-pynecore[cli]
 pip install pynesys-pynecore[all]
 ```
 
+> **Note for Windows users**: PyneCore requires timezone data that is not included in Windows by default. The `[cli]` and `[all]` installations automatically include the `tzdata` package. If you're using the basic installation and encounter timezone errors, install it manually with `pip install tzdata`.
+
 ## Getting Started
 
 ### Create a Simple Script

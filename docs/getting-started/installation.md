@@ -25,6 +25,10 @@ Before installing PyneCore, ensure your system meets the following requirements:
 - **Operating System**: Windows, macOS, or Linux
 - **Required Dependencies**: The core system has minimal dependencies, but some features require additional packages
 
+### Windows-specific Requirements
+
+Windows users need to be aware that Python's `zoneinfo` module requires timezone data that is not included in Windows by default. This is automatically handled when installing with the `[cli]` or `[all]` options, which include the `tzdata` package. If you encounter timezone-related errors with the basic installation, you'll need to install `tzdata` manually.
+
 ## Installation Methods
 
 ### Method 1: Using pip (Recommended)

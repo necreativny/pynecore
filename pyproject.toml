@@ -31,10 +31,10 @@ classifiers = [
 dependencies = []
 
 # With user-friendly CLI
-optional-dependencies.cli = ["typer", "rich"]
+optional-dependencies.cli = ["typer", "rich", "tzdata"]
 
 # All optional dependencies for cli and all built-in providers
-optional-dependencies.all = ["typer", "rich", "httpx", "ccxt", "pycryptodome"]
+optional-dependencies.all = ["typer", "rich", "httpx", "ccxt", "pycryptodome", "tzdata"]
 
 #Optional dependencies for development
 optional-dependencies.dev = ["pytest", "pytest-spec"]

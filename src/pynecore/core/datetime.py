@@ -55,6 +55,15 @@ def parse_timezone(timezone: str) -> ZoneInfo:
     try:
         return ZoneInfo(timezone)
     except KeyError:
+        # Check if this is a timezone data issue with common timezones
+        if timezone in ('UTC', 'GMT', 'EST', 'PST', 'CST', 'MST'):
+            raise ValueError(
+                f"Timezone '{timezone}' not found. This typically means the IANA timezone database is missing.\n\n"
+                "To fix this, install the tzdata package:\n"
+                "  pip install tzdata\n\n"
+                "Note: This is most common on Windows, as it doesn't include timezone data by default.\n"
+                "If you installed PyneCore with [cli] or [all] options, tzdata should already be included."
+            )
         pass
 
     # Parse UTC/GMT±HHMM format with optional colon
@@ -68,7 +77,7 @@ def parse_timezone(timezone: str) -> ZoneInfo:
     prefix, sign, hours, minutes = match.groups()
     offset = int(hours)
     if minutes:
-        offset = float(f"{offset}.{int(minutes) / 60:.2f}"[:-1])
+        offset += int(minutes) / 60
 
     # UTC/GMT+X maps to Etc/GMT-X and vice versa
     zone = f"Etc/GMT{'-' if sign == '+' else '+'}{abs(offset)}"
