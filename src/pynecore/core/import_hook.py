@@ -6,17 +6,6 @@ import importlib.util
 import importlib.machinery
 from pathlib import Path
 
-from pynecore.transformers.import_lifter import ImportLifterTransformer
-from pynecore.transformers.import_normalizer import ImportNormalizerTransformer
-from pynecore.transformers.module_property import ModulePropertyTransformer
-from pynecore.transformers.persistent_series import PersistentSeriesTransformer
-from pynecore.transformers.lib_series import LibrarySeriesTransformer
-from pynecore.transformers.series import SeriesTransformer
-from pynecore.transformers.persistent import PersistentTransformer
-from pynecore.transformers.function_isolation import FunctionIsolationTransformer
-from pynecore.transformers.input_transformer import InputTransformer
-from pynecore.transformers.safe_convert_transformer import SafeConvertTransformer
-
 
 class PyneLoader(importlib.machinery.SourceFileLoader):
     """Loader that handles AST transformation"""
@@ -28,7 +17,7 @@ class PyneLoader(importlib.machinery.SourceFileLoader):
         path = Path(path)
 
         # Store file path in AST for transformers
-        tree._module_file_path = str(path.resolve())
+        tree._module_file_path = str(path.resolve())  # type: ignore
 
         # Only transform if it has @pyne decorator
         if (tree.body and isinstance(tree.body[0], ast.Expr) and
@@ -42,7 +31,18 @@ class PyneLoader(importlib.machinery.SourceFileLoader):
                                 if not (isinstance(node, ast.FunctionDef)
                                         and node.name.startswith('__test_') and node.name.endswith('__'))]
 
-            # Transform AST
+            # Transform AST - lazy import transformers only when needed
+            from pynecore.transformers.import_lifter import ImportLifterTransformer
+            from pynecore.transformers.import_normalizer import ImportNormalizerTransformer
+            from pynecore.transformers.persistent_series import PersistentSeriesTransformer
+            from pynecore.transformers.lib_series import LibrarySeriesTransformer
+            from pynecore.transformers.function_isolation import FunctionIsolationTransformer
+            from pynecore.transformers.module_property import ModulePropertyTransformer
+            from pynecore.transformers.series import SeriesTransformer
+            from pynecore.transformers.persistent import PersistentTransformer
+            from pynecore.transformers.input_transformer import InputTransformer
+            from pynecore.transformers.safe_convert_transformer import SafeConvertTransformer
+
             transformed = ImportLifterTransformer().visit(transformed)
             transformed = ImportNormalizerTransformer().visit(transformed)
             transformed = PersistentSeriesTransformer().visit(transformed)
