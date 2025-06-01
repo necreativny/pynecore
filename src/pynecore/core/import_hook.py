@@ -4,6 +4,7 @@ import sys
 import ast
 import importlib.util
 import importlib.machinery
+import re
 from pathlib import Path
 
 
@@ -13,8 +14,27 @@ class PyneLoader(importlib.machinery.SourceFileLoader):
     # noinspection PyMethodOverriding
     def source_to_code(self, data, path, *, _optimize=-1):
         """Transform source to code if needed"""
-        tree = ast.parse(data)
         path = Path(path)
+
+        # Create marker file for pynecore site-packages to indicate we processed this file
+        if '/site-packages/' in str(path) and '/pynecore/' in str(path):
+            cache_dir = path.parent / '__pycache__'
+            pyc_name = f'{path.stem}.cpython-{sys.version_info.major}{sys.version_info.minor}'
+            marker_path = cache_dir / f'{pyc_name}.pyne'
+            try:
+                cache_dir.mkdir(exist_ok=True)
+                marker_path.touch()
+            except (OSError, PermissionError):
+                pass  # Ignore if we can't create marker
+
+        # Fast check for @pyne decorator before parsing AST
+        # data is bytes, need to convert to string for regex
+        if not re.search(r'@pyne\b', data.decode('utf-8')):
+            # No @pyne decorator, let Python handle it normally
+            return compile(data, path, 'exec', optimize=_optimize)
+
+        # Parse AST only if @pyne is present
+        tree = ast.parse(data)
 
         # Store file path in AST for transformers
         tree._module_file_path = str(path.resolve())  # type: ignore
@@ -99,13 +119,34 @@ class PyneImportHook:
         for entry in path:
             if entry == "":
                 entry = "."
-            py_path = Path(entry) / f"{name}.py"
-            if py_path.exists():
-                return importlib.util.spec_from_file_location(
-                    fullname,
-                    py_path,
-                    loader=PyneLoader(fullname, str(py_path))
-                )
+
+            # Check both module.py and module/__init__.py
+            candidates = [
+                Path(entry) / f"{name}.py",
+                Path(entry) / name / "__init__.py"
+            ]
+
+            for py_path in candidates:
+                if py_path.exists():
+                    # Check if pynecore site-packages bytecode needs recompilation
+                    if '/site-packages/' in str(py_path) and '/pynecore/' in str(py_path):
+                        cache_dir = py_path.parent / '__pycache__'
+                        pyc_name = f'{py_path.stem}.cpython-{sys.version_info.major}{sys.version_info.minor}'
+                        pyc_path = cache_dir / f'{pyc_name}.pyc'
+                        marker_path = cache_dir / f'{pyc_name}.pyne'
+
+                        if pyc_path.exists() and not marker_path.exists():
+                            # Bytecode exists but no marker - force recompile
+                            try:
+                                pyc_path.unlink()
+                            except (OSError, PermissionError):
+                                pass  # Ignore if we can't delete
+
+                    return importlib.util.spec_from_file_location(
+                        fullname,
+                        py_path,
+                        loader=PyneLoader(fullname, str(py_path))
+                    )
         return None
 
 
