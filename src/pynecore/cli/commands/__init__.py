@@ -9,9 +9,9 @@ from ..utils.error_hook import setup_global_error_logging
 from ...providers import available_providers
 
 # Import commands
-from . import run, data, compile
+from . import run, data, compile, benchmark
 
-__all__ = ['run', 'data', 'compile']
+__all__ = ['run', 'data', 'compile', 'benchmark']
 
 
 @app.callback()
@@ -24,6 +24,11 @@ def setup(
             help="Working directory",
             file_okay=False, dir_okay=True,
             resolve_path=True,
+        ),
+        recreate_demo: bool = typer.Option(
+            False,
+            "--recreate-demo",
+            help="Recreate demo.py and demo.ohlcv files even if workdir exists",
         ),
 ):
     """
@@ -49,14 +54,16 @@ def setup(
     scripts_dir = Path(workdir) / 'scripts' / 'lib'
     scripts_dir.mkdir(parents=True, exist_ok=True)
 
-    # Create demo.py file only if we created the workdir in this run
-    if not workdir_existed:
+    # Create demo.py file only if we created the workdir in this run or recreate_demo is True
+    if not workdir_existed or recreate_demo:
         demo_file = Path(workdir) / 'scripts' / 'demo.py'
-        if not demo_file.exists():
+        if not demo_file.exists() or recreate_demo:
+            if recreate_demo and demo_file.exists():
+                typer.echo("Recreating demo.py...")
             with demo_file.open('w') as f:
                 f.write('''"""
 @pyne
-Simple Pyne Script Demo
+Simple Pyne code Demo
 
 A basic demo showing a 12 and 26 period EMA crossover system.
 """
@@ -89,6 +96,111 @@ def main(
     # Create data directory
     data_dir = Path(workdir) / 'data'
     data_dir.mkdir(exist_ok=True)
+
+    # Create demo.ohlcv file only if we created the workdir in this run or recreate_demo is True
+    if not workdir_existed or recreate_demo:
+        from datetime import datetime, timedelta, time as dt_time
+        from ...core.ohlcv_file import OHLCVWriter
+        from ...core.syminfo import SymInfo, SymInfoInterval, SymInfoSession
+        from ...types.ohlcv import OHLCV
+        import random
+
+        demo_file = data_dir / 'demo.ohlcv'
+        if not demo_file.exists() or recreate_demo:
+            if recreate_demo and demo_file.exists():
+                typer.echo("Recreating demo.ohlcv and demo.toml...")
+                # Remove existing files to start fresh
+                demo_file.unlink(missing_ok=True)
+                toml_path = demo_file.with_suffix(".toml")
+                toml_path.unlink(missing_ok=True)
+            # Create opening hours, session starts and ends for 24/7 trading
+            opening_hours = []
+            session_starts = []
+            session_ends = []
+
+            for day in range(7):  # 0 = Monday, 6 = Sunday
+                opening_hours.append(SymInfoInterval(
+                    day=day,
+                    start=dt_time(0, 0, 0),
+                    end=dt_time(23, 59, 59)
+                ))
+                session_starts.append(SymInfoSession(
+                    day=day,
+                    time=dt_time(0, 0, 0)
+                ))
+                session_ends.append(SymInfoSession(
+                    day=day,
+                    time=dt_time(23, 59, 59)
+                ))
+
+            # Create symbol info
+            syminfo = SymInfo(
+                prefix="DEMO",
+                description="Demo Benchmark Asset",
+                ticker="DEMOBTC",
+                currency="BTC",
+                basecurrency="DEMO",
+                period="1D",
+                type="crypto",
+                volumetype="base",
+                mintick=0.01,
+                pricescale=100,
+                minmove=1,
+                pointvalue=1.0,
+                opening_hours=opening_hours,
+                session_starts=session_starts,
+                session_ends=session_ends,
+                timezone="UTC",
+                avg_spread=None,
+                taker_fee=0.001,
+                maker_fee=0.0005
+            )
+
+            # Save symbol info
+            toml_path = demo_file.with_suffix(".toml")
+            syminfo.save_toml(toml_path)
+
+            # Generate synthetic OHLCV data (2000 candles) with random walk
+            start_time = datetime(2020, 1, 1, 0, 0, 0)
+            base_price = 100.0
+
+            # Use fixed seed for reproducibility
+            random.seed(42)
+
+            with OHLCVWriter(demo_file) as writer:
+                current_price = base_price
+
+                for i in range(2000):
+                    timestamp = int((start_time + timedelta(days=i)).timestamp())
+
+                    # Random walk with slight upward bias
+                    change_percent = random.gauss(0.0002, 0.02)  # 0.02% mean, 2% std dev
+                    current_price *= (1 + change_percent)
+
+                    # Generate OHLC with some volatility
+                    daily_volatility = random.uniform(0.01, 0.03)
+
+                    open_price = current_price
+                    high_price = open_price * (1 + daily_volatility * random.random())
+                    low_price = open_price * (1 - daily_volatility * random.random())
+                    close_price = low_price + (high_price - low_price) * random.random()
+
+                    # Update current price for next candle
+                    current_price = close_price
+
+                    # Volume with some randomness
+                    volume = 1000000 * (1 + random.uniform(-0.5, 1.0))
+
+                    ohlcv = OHLCV(
+                        timestamp=timestamp,
+                        open=open_price,
+                        high=high_price,
+                        low=low_price,
+                        close=close_price,
+                        volume=volume,
+                        extra_fields=None
+                    )
+                    writer.write(ohlcv)
     # Create output and logs directory
     output_dir = Path(workdir) / 'output' / 'logs'
     output_dir.mkdir(parents=True, exist_ok=True)
