@@ -3,6 +3,7 @@ from types import ModuleType
 import sys
 from pathlib import Path
 from datetime import datetime, UTC
+from zoneinfo import ZoneInfo
 
 from pynecore.types.ohlcv import OHLCV
 from pynecore.core.syminfo import SymInfo
@@ -19,6 +20,110 @@ __all__ = [
     'import_script',
     'ScriptRunner',
 ]
+
+# modified from ScriptRunner.run_iter to match desired parameters and return values
+# tz and last_bar_index are hardcoded to match desired parameters and return values
+def idk_forkdemo_runner(script_path: Path, ohlcv_iter: Iterable[OHLCV], on_progress: Callable[[datetime], None] | None = None) \
+            -> Iterator[tuple[OHLCV, dict[str, Any]] | tuple[OHLCV, dict[str, Any], list['Trade']]]:
+        """
+        Run the script on the data
+
+        :param script_path: The path to the script to run
+        :param ohlcv_iter: Iterator of OHLCV data
+        :param on_progress: Callback to call on every iteration
+        :return: Return a dictionary with all data the sctipt plotted
+        :raises AssertionError: If the 'main' function does not return a dictionary
+        """
+
+        last_bar_index = 0
+        tz: ZoneInfo = ZoneInfo("UTC")
+
+
+        script_module = import_script(script_path)
+
+        if not hasattr(script_module.main, 'script'):
+            raise ImportError(f"The 'main' function must be decorated with "
+                              f"@script.[indicator|strategy|library] to run!")
+
+        script_obj: script = script_module.main.script
+
+        from .. import lib
+        from ..lib import _parse_timezone, barstate, string
+        from pynecore.core import function_isolation
+
+        is_strat = script_obj.script_type == script_type.strategy
+
+        # Reset bar_index
+        bar_index = 0
+        # Reset function isolation
+        function_isolation.reset()
+
+        # Set script data
+        lib._script = script_obj  # Store script object in lib
+
+        # # Update syminfo lib properties if needed
+        # if not self.update_syminfo_every_run:
+        #     _set_lib_syminfo_properties(self.syminfo, lib)
+        #     self.tz = _parse_timezone(lib.syminfo.timezone)
+
+        # Clear plot data
+        lib._plot_data.clear()
+
+        # Position shortcut
+        position = script_obj.position
+
+        try:
+            for candle in ohlcv_iter:
+                # # Update syminfo lib properties if needed, other ScriptRunner instances may have changed them
+                # if self.update_syminfo_every_run:
+                #     _set_lib_syminfo_properties(self.syminfo, lib)
+                #     self.tz = _parse_timezone(lib.syminfo.timezone)
+
+                if bar_index == last_bar_index:
+                    barstate.islast = True
+
+                # Update lib properties
+                _set_lib_properties(candle, bar_index, tz, lib)
+
+                # Reset function isolation
+                function_isolation.reset_step()
+
+                # Process limit orders
+                if is_strat and position:
+                    position.process_orders()
+
+                # Run the script
+                res = script_module.main()
+
+                # Update plot data with the results
+                if res is not None:
+                    assert isinstance(res, dict), "The 'main' function must return a dictionary!"
+                    lib._plot_data.update(res)
+                
+                # Yield plot data to be able to process in a subclass
+                if not is_strat:
+                    yield candle, lib._plot_data
+                elif position:
+                    yield candle, lib._plot_data, position.new_closed_trades
+                
+                # Clear plot data
+                lib._plot_data.clear()
+
+                # Call the progress callback
+                if on_progress:
+                    assert lib._datetime is not None
+                    on_progress(lib._datetime.replace(tzinfo=None))
+
+                # Update bar index
+                bar_index += 1
+                # It is no longer the first bar
+                barstate.isfirst = False
+
+            if on_progress:
+                on_progress(datetime.max)
+
+        except GeneratorExit:
+            pass
 
 
 def import_script(script_path: Path) -> ModuleType:
