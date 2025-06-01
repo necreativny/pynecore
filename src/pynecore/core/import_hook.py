@@ -12,7 +12,7 @@ class PyneLoader(importlib.machinery.SourceFileLoader):
     """Loader that handles AST transformation"""
 
     # noinspection PyMethodOverriding
-    def source_to_code(self, data, path, *, _optimize=-1):
+    def source_to_code(self, data: bytes | str, path: str, *, _optimize: int = -1):
         """Transform source to code if needed"""
         path = Path(path)
 
@@ -29,12 +29,13 @@ class PyneLoader(importlib.machinery.SourceFileLoader):
 
         # Fast check for @pyne decorator before parsing AST
         # data is bytes, need to convert to string for regex
-        if not re.search(r'@pyne\b', data.decode('utf-8')):
+        data_str = data.decode('utf-8') if isinstance(data, bytes) else data
+        if not re.search(r'@pyne\b', data_str):
             # No @pyne decorator, let Python handle it normally
             return compile(data, path, 'exec', optimize=_optimize)
 
         # Parse AST only if @pyne is present
-        tree = ast.parse(data)
+        tree = ast.parse(data_str)
 
         # Store file path in AST for transformers
         tree._module_file_path = str(path.resolve())  # type: ignore
