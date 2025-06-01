@@ -5,11 +5,7 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 package-dir = { "pynecore" = "src/pynecore" }
 packages.find = { where = ["src"] }
-
-[tool.setuptools.install]
-# Disable compilation on install. We need AST transformations for lib modules,
-# so we need to compile on 1st run with our import hook
-no-compile = true
+include-package-data = true
 
 [tool.distutils]
 egg_info.egg_base = "build"
@@ -21,7 +17,7 @@ description = "Python based Pine Script like runtime and API"
 authors = [{ name = "PYNESYS LLC", email = "hello@pynesys.com" }]
 readme = "README.md"
 requires-python = ">=3.11"
-license = "Apache-2.0"
+license = {text = "Apache-2.0"}
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
