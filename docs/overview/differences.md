@@ -118,6 +118,7 @@ Both Pine Script and Python (Pyne) use lexical scoping, but with important diffe
 Pine Script has stricter scoping rules than Python:
 
 **Pine Script**:
+
 - Uses block-level scoping
 - Every code block (if statements, for loops, functions) has its own scope
 - Variables defined within blocks are not accessible outside that block
@@ -128,6 +129,7 @@ if (condition)
 ```
 
 **Python/PyneCore**:
+
 - Uses function-level scoping
 - Only functions create new scopes
 - Variables from blocks (if statements, for loops) remain accessible outside those blocks
@@ -142,6 +144,7 @@ print(block_var)  # Works in Python, would fail in Pine Script
 #### Variable Lifecycle Differences
 
 **Pine Script**:
+
 - Variables reinitialize on each bar by default
 - Use the `var` keyword to make a variable persist between bars
 
@@ -151,6 +154,7 @@ var persistentCounter = 0  // Keeps its value across bars
 ```
 
 **PyneCore**:
+
 - Regular variables follow normal Python behavior
 - Use `Persistent[T]` type annotation to indicate persistence between bars
 
@@ -162,10 +166,12 @@ persistentCounter: Persistent[int] = 0  # Persists across bars
 #### Series Behavior
 
 **Pine Script**:
+
 - Every variable is a Series by default
 - Can access historical values with index operator: `close[1]`
 
 **PyneCore**:
+
 - Series variables must be explicitly marked with `Series[T]` type annotation
 - Historical values accessed the same way: `close[1]`
 
@@ -175,23 +181,27 @@ series_var: Series[float] = close  # Explicitly marked as Series
 previous_value = series_var[1]  # Access previous bar's value
 ```
 
-These differences require special attention when converting code from Pine Script to PyneCore, particularly regarding block-level variables and explicit type annotations.
+These differences require special attention when converting code from Pine Script to PyneCore, particularly regarding
+block-level variables and explicit type annotations.
 
 ### Inline functions
 
-In Pyne code you can use inline functions. That is very similar to Pine Script's functions, where you can access variables from outer scopes. Though in Pyne you can also modify outer scope variables by using the `nonlocal` keyword.
+In Pyne code you can use inline functions. That is very similar to Pine Script's functions, where you can access
+variables from outer scopes. Though in Pyne you can also modify outer scope variables by using the `nonlocal` keyword.
 
 ```javascript
 // Pine Script
 x = 1
-inner() =>
-    x += 1  // This raises an error in Pine Script
-    x
+inner()
+=>
+x += 1  // This raises an error in Pine Script
+x
 ```
 
 ```python
 def main():
     x = 1
+
     def inner():
         nonlocal x
         x += 1  # This works in Pyne (Python)
@@ -223,14 +233,42 @@ Both `x` and `y` will be `2` in this case.
 
 ## Type differences
 
+### Basic types
+
+| Pine Script type | PyneCore type |
+|------------------|---------------|
+| int              | int           |
+| float            | float         |
+| bool             | bool          |
+| string           | str           |
+| color            | Color         |
+
+### Other builtin types
+
+In Pine Script types are sometimes inconsistent. E.g. the `line` is also a type and also a package.
+In Python it is not easily possible and it would be confusing. So in PyneCore we use capitalized names
+and you need to import them explicitly:
+
+| Pine Script type | PyneCore type | PyneCore import                               |
+|------------------|---------------|-----------------------------------------------|
+| line             | Line          | `from pynecore.types import Line`             |
+| label            | Label         | `from pynecore.types import Label`            |
+| box              | Box           | `from pynecore.types import Box`              |
+| table            | Table         | `from pynecore.types import Table`            |
+| linefill         | LineFill      | `from pynecore.types import LineFill`         |
+| polyline         | Polyline      | `from pynecore.types import Polyline`         |
+| chart.point      | ChartPoint    | `from pynecore.types.chart import ChartPoint` |
+
 ### na
 
 In Pine Script every basic types can be `na` (not available). In Pyne there is an `NA` class that works
 the same way. Though in Pine if you write the following code:
 
 ```javascript
-int i = na  // Note that you must specify the type here
-float f = na
+int
+i = na  // Note that you must specify the type here
+float
+f = na
 ```
 
 `i` will be an `int(na)` and `f` will be a `float(na)`. So `na` will have the type of the variable.
