@@ -1,5 +1,4 @@
 from datetime import timedelta
-from dataclasses import dataclass
 
 from ..types.color import Color
 from ..core.module_property import module_property
@@ -20,21 +19,6 @@ is_pnf = False
 is_range = False
 is_renko = False
 is_standard = True
-
-
-@dataclass(slots=True)
-class Point:
-    # The x-coordinate of the point, expressed as a bar index value
-    index: int
-
-    # The x-coordinate of the point, expressed as a UNIX time value, in milliseconds
-    time: int
-
-    # The y-coordinate of the point
-    price: float
-
-
-point = Point
 
 
 # noinspection PyProtectedMember

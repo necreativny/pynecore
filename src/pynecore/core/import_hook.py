@@ -23,7 +23,9 @@ class PyneLoader(importlib.machinery.SourceFileLoader):
             marker_path = cache_dir / f'{pyc_name}.pyne'
             try:
                 cache_dir.mkdir(exist_ok=True)
-                marker_path.touch()
+                # Write the .py file's mtime to the marker
+                py_mtime = str(path.stat().st_mtime)
+                marker_path.write_text(py_mtime)
             except (OSError, PermissionError):
                 pass  # Ignore if we can't create marker
 
@@ -136,10 +138,30 @@ class PyneImportHook:
                         pyc_path = cache_dir / f'{pyc_name}.pyc'
                         marker_path = cache_dir / f'{pyc_name}.pyne'
 
-                        if pyc_path.exists() and not marker_path.exists():
-                            # Bytecode exists but no marker - force recompile
+                        need_recompile = False
+                        
+                        if pyc_path.exists():
+                            if not marker_path.exists():
+                                # No marker - definitely need recompile
+                                need_recompile = True
+                            else:
+                                # Check if marker has the correct py mtime
+                                try:
+                                    stored_mtime = marker_path.read_text().strip()
+                                    current_mtime = str(py_path.stat().st_mtime)
+                                    if stored_mtime != current_mtime:
+                                        # .py file changed - need recompile
+                                        need_recompile = True
+                                except (OSError, ValueError):
+                                    # Can't read marker or invalid content - need recompile
+                                    need_recompile = True
+                        
+                        if need_recompile:
+                            # Force recompile by removing the old bytecode
                             try:
                                 pyc_path.unlink()
+                                if marker_path.exists():
+                                    marker_path.unlink()  # Also remove old marker
                             except (OSError, PermissionError):
                                 pass  # Ignore if we can't delete
 
