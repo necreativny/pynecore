@@ -41,7 +41,7 @@ class PersistentTransformer(ast.NodeTransformer):
 
         # Then check parent scopes
         for i in range(len(self.scope_stack) - 1, -1, -1):
-            scope = "_".join(self.scope_stack[:i + 1])  # Keep underscore for variable names
+            scope = "·".join(self.scope_stack[:i + 1])  # Use middle dot as separator
 
             if scope in self.persistent_vars:
                 if var_name in self.persistent_vars[scope]:
@@ -88,8 +88,8 @@ class PersistentTransformer(ast.NodeTransformer):
 
         # Collect all variables for each scope
         for scope, vars_dict in self.persistent_vars.items():
-            # Register every scope with its variables - convert '_' to '.' in key name only
-            function_name = scope.replace('_', '.') if scope else "main"
+            # Register every scope with its variables - convert '·' to '.' in key name only
+            function_name = scope.replace('·', '.') if scope else "main"
             function_vars: list[str] = []
 
             for var_name, global_name in vars_dict.items():
@@ -151,7 +151,7 @@ class PersistentTransformer(ast.NodeTransformer):
             if not self.current_verifying_scope:
                 self.current_verifying_scope = node.name
             else:
-                self.current_verifying_scope = f"{self.current_verifying_scope}_{node.name}"
+                self.current_verifying_scope = f"{self.current_verifying_scope}·{node.name}"
 
             # Process function and update scope back when done
             result = self._process_verify_node(cast(ast.FunctionDef, node))
@@ -188,9 +188,9 @@ class PersistentTransformer(ast.NodeTransformer):
                     # Then check parent scopes
                     if not global_name and self.current_verifying_scope:
                         # Try parent scopes
-                        scope_parts = self.current_verifying_scope.split('_')
+                        scope_parts = self.current_verifying_scope.split('·')
                         for _ in range(len(scope_parts) - 1, 0, -1):
-                            parent_scope = '_'.join(scope_parts[:i])
+                            parent_scope = '·'.join(scope_parts[:i])
                             parent_key = (parent_scope, var_name)
                             if parent_key in self.all_persistent_vars:
                                 global_name = self.all_persistent_vars[parent_key]
@@ -225,9 +225,9 @@ class PersistentTransformer(ast.NodeTransformer):
                     # Then check parent scopes
                     if not global_name and self.current_verifying_scope:
                         # Try parent scopes
-                        scope_parts = self.current_verifying_scope.split('_')
+                        scope_parts = self.current_verifying_scope.split('·')
                         for i in range(len(scope_parts) - 1, 0, -1):
-                            parent_scope = '_'.join(scope_parts[:i])
+                            parent_scope = '·'.join(scope_parts[:i])
                             parent_key = (parent_scope, var_name)
                             if parent_key in self.all_persistent_vars:
                                 global_name = self.all_persistent_vars[parent_key]
@@ -261,7 +261,7 @@ class PersistentTransformer(ast.NodeTransformer):
         else:
             self.scope_stack.append(node.name)
 
-        self.current_scope = "_".join(self.scope_stack)  # Keep underscore for variable names
+        self.current_scope = "·".join(self.scope_stack)  # Use middle dot as separator to avoid conflicts
 
         # Initialize tracking sets for this scope
         self.scope_vars.setdefault(self.current_scope, set())
@@ -306,7 +306,7 @@ class PersistentTransformer(ast.NodeTransformer):
         # Fix nonlocal statements - remove persistent variables
         persistent_globals = set()
         for i in range(len(self.scope_stack)):
-            scope = "_".join(self.scope_stack[:i + 1])
+            scope = "·".join(self.scope_stack[:i + 1])
             if scope in self.persistent_vars:
                 for var_name, global_name in self.persistent_vars[scope].items():
                     if global_name in self.modified_vars.get(self.current_scope, set()):
@@ -326,7 +326,7 @@ class PersistentTransformer(ast.NodeTransformer):
         node.body = new_body
 
         self.scope_stack.pop()
-        self.current_scope = "_".join(self.scope_stack)  # Keep underscore for variable names
+        self.current_scope = "·".join(self.scope_stack)  # Use middle dot as separator to avoid conflicts
         return node
 
     @staticmethod
@@ -408,7 +408,7 @@ class PersistentTransformer(ast.NodeTransformer):
             self.local_vars[self.current_scope].add(var_name)
 
             # Generate global name using current scope
-            global_name = f"__persistent_{self.current_scope}_{var_name}__"
+            global_name = f"__persistent_{self.current_scope}·{var_name}__"
 
             # Initialize scope dict if needed
             if self.current_scope not in self.persistent_vars:

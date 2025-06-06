@@ -36,7 +36,7 @@ class SeriesTransformer(ast.NodeTransformer):
         if scope is None:
             scope = self._get_current_scope()
 
-        series_name = f'__series_{scope}_{var_name}__'
+        series_name = f'__series_{scope}·{var_name}__'
 
         if scope not in self.series_vars:
             self.series_vars[scope] = {}
@@ -54,7 +54,7 @@ class SeriesTransformer(ast.NodeTransformer):
         """
         if not self.current_function:
             return ""
-        return "_".join(self.parent_functions + [self.current_function])
+        return "·".join(self.parent_functions + [self.current_function])
 
     def _get_series_in_current_scope(self, var_name: str) -> str | None:
         """
@@ -92,8 +92,8 @@ class SeriesTransformer(ast.NodeTransformer):
 
         # First collect variables for all functions
         for scope, vars_dict in self.series_vars.items():
-            # Convert underscores to dots in key name only
-            function_name = scope.replace('_', '.') if scope else "main"
+            # Convert middle dots to dots in key name only
+            function_name = scope.replace('·', '.') if scope else "main"
             # Only add non-empty scopes to the registry
             if scope and vars_dict:
                 if function_name not in function_vars_dict:

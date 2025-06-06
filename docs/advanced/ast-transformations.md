@@ -268,8 +268,15 @@ Key aspects:
 - Adds global declarations in functions
 - Handles initialization for non-literal values
 - Maintains a registry of all Persistent variables by scope
+- Uses `·` (middle dot, U+00B7) as scope separator in variable names to avoid conflicts with underscores in function names
 
 This is the fastest possible way to implement persistent variables.
+
+**Important Note**: The Persistent and Series transformers use the Unicode character `·` (middle dot, U+00B7) as the internal scope separator. This prevents conflicts when function names contain underscores. For example:
+- Function `f_f` in scope `main` creates variables like `__persistent_main·f_f·a__`
+- This ensures proper isolation between functions with similar names
+
+Avoid using the `·` character in function or variable names to prevent conflicts with the internal scoping system.
 
 ### Input Transformer
 
