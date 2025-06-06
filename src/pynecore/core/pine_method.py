@@ -5,8 +5,6 @@ from .function_isolation import isolate_function
 
 __scope_id__ = ''
 
-methods = {}
-
 
 def method(func: Callable) -> Callable:
     """

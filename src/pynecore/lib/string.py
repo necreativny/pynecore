@@ -60,7 +60,7 @@ def _format_number(value: float, fmt_type: str = '', precision: str = '#.###') -
 
     elif fmt_type == _format.inherit:
         assert lib._script is not None and lib._script.precision is not None
-        precision = '#.' + '#' * lib._script.precision
+        precision = '#.' + '#' * int(lib._script.precision)
 
     elif fmt_type == _format.volume:
         if value >= 1_000_000_000:
