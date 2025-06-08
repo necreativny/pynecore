@@ -72,6 +72,8 @@ NON_TRANSFORMABLE_FUNCTIONS = {
     # Other
     'copy', 'dataclass', 'dccopy',
     'pytest.raises',
+
+    'method_call', 'pine_range'
 }
 
 

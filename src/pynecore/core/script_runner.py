@@ -163,6 +163,7 @@ class ScriptRunner:
         from .. import lib
         from ..lib import _parse_timezone, barstate, string
         from pynecore.core import function_isolation
+        from . import script
 
         is_strat = self.script.script_type == script_type.strategy
 
@@ -219,9 +220,10 @@ class ScriptRunner:
                     position.process_orders()
 
                 # Execute registered library main functions before main script
-                from . import script
+                lib._lib_semaphore = True
                 for library_title, main_func in script._registered_libraries:
                     main_func()
+                lib._lib_semaphore = False
 
                 # Run the script
                 res = self.script_module.main()

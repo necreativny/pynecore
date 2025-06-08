@@ -17,7 +17,7 @@ class Exported(Generic[F]):
     """
     __fn__: Optional[F] = None
 
-    def set(self, client: F) -> None:
+    def set(self, client: F):
         """Set the client function"""
         self.__fn__ = client
 
@@ -25,9 +25,6 @@ class Exported(Generic[F]):
         if self.__fn__ is None:
             raise ValueError("Function has not been set yet")
         return self.__fn__(*args, **kwargs)
-
-
-_do_nothing = lambda: None
 
 
 @overload
@@ -62,7 +59,7 @@ def export(
 
     def decorator(f: Callable) -> Callable:
         func_name = f.__name__
-        
+
         # Check if there's already something with the same name in globals
         if func_name in func_globals:
             existing = func_globals[func_name]
@@ -73,7 +70,7 @@ def export(
             elif callable(existing):
                 # Function already exists in global scope, just return it unchanged (decorator as decoration)
                 return f
-        
+
         # No proxy found, throw error explaining what's needed
         raise ValueError(
             f"No Exported proxy found for function '{func_name}' in global scope. "
