@@ -3,6 +3,7 @@ from types import FunctionType
 from collections import defaultdict
 from dataclasses import is_dataclass, replace as dataclass_replace
 from copy import copy
+from .pine_export import Exported
 
 __all__ = ['isolate_function', 'reset', 'reset_step']
 
@@ -38,6 +39,12 @@ def isolate_function(func: FunctionType | Callable, call_id: str | None = None, 
     # If there is no call ID, return the function as is
     if call_id is None:
         return func
+
+    # Check if this is an Exported proxy and unwrap it
+    if isinstance(func, Exported):
+        func = func.__fn__
+        if func is None:
+            raise ValueError("Exported proxy has not been initialized with a function yet")        
 
     # If it is a type object, return it as is
     if isinstance(func, type):

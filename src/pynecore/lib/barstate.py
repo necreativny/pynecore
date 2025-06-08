@@ -1,5 +1,14 @@
 from ..core.module_property import module_property
-from ..utils.export import export
+
+__all__ = [
+    'isfirst',
+    'islast', 
+    'isconfirmed',
+    'ishistory',
+    'islastconfirmedhistory',
+    'isnew',
+    'isrealtime'
+]
 
 # TODO: support live trading
 
@@ -10,7 +19,6 @@ islast = False
 """ Returns true if current bar is the last bar in barset, false otherwise. """
 
 
-@export
 @module_property
 def isconfirmed() -> bool:
     """
@@ -22,7 +30,6 @@ def isconfirmed() -> bool:
     return True
 
 
-@export
 @module_property
 def ishistory() -> bool:
     """
@@ -34,7 +41,6 @@ def ishistory() -> bool:
     return True
 
 
-@export
 @module_property
 def islastconfirmedhistory() -> bool:
     """
@@ -48,7 +54,6 @@ def islastconfirmedhistory() -> bool:
     return False
 
 
-@export
 @module_property
 def isnew() -> bool:
     """
@@ -60,7 +65,6 @@ def isnew() -> bool:
     return False
 
 
-@export
 @module_property
 def isrealtime() -> bool:
     """
