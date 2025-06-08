@@ -3,6 +3,7 @@ from datetime import datetime
 import queue
 import threading
 import time
+import sys
 
 from typer import Option, Argument, secho, Exit
 from rich.progress import (Progress, SpinnerColumn, TextColumn, BarColumn,
@@ -159,6 +160,13 @@ def run(
         size = reader.get_size(int(time_from.timestamp()), int(time_to.timestamp()))
         ohlcv_iter = reader.read_from(int(time_from.timestamp()), int(time_to.timestamp()))
 
+        # Add lib directory to Python path for library imports
+        lib_dir = app_state.scripts_dir / "lib"
+        lib_path_added = False
+        if lib_dir.exists() and lib_dir.is_dir():
+            sys.path.insert(0, str(lib_dir))
+            lib_path_added = True
+
         # Show loading spinner while importing
         with Progress(
                 SpinnerColumn(finished_text="[green]✓"),
@@ -166,9 +174,14 @@ def run(
         ) as loading_progress:
             loading_task = loading_progress.add_task("Loading PyneCore...", total=1)
             
-            # Create script runner (this is where the import happens)
-            runner = ScriptRunner(script, ohlcv_iter, syminfo, last_bar_index=size - 1,
-                                  plot_path=plot_path, strat_path=strat_path, equity_path=equity_path)
+            try:
+                # Create script runner (this is where the import happens)
+                runner = ScriptRunner(script, ohlcv_iter, syminfo, last_bar_index=size - 1,
+                                      plot_path=plot_path, strat_path=strat_path, equity_path=equity_path)
+            finally:
+                # Remove lib directory from Python path
+                if lib_path_added:
+                    sys.path.remove(str(lib_dir))
             
             # Mark as completed
             loading_progress.update(loading_task, completed=1)

@@ -3,11 +3,22 @@ from datetime import datetime, timedelta
 from ..types.session import Session
 
 from ..core.module_property import module_property
-from ..utils.export import export
 
 from . import syminfo
 from . import timeframe
 from .. import lib
+
+__all__ = [
+    "regular",
+    "extended",
+    "isfirstbar_regular",
+    "isfirstbar",
+    "islastbar_regular",
+    "islastbar",
+    "ismarket",
+    "ispremarket",
+    "ispostmarket"
+]
 
 #
 # Constants
@@ -15,8 +26,6 @@ from .. import lib
 
 regular = Session()
 extended = Session()
-
-export("regular", "extended")
 
 
 #
@@ -56,7 +65,6 @@ def _check_session(dt: datetime, tf_sec: int) -> bool:
 #
 
 # noinspection PyProtectedMember
-@export
 @module_property
 def isfirstbar_regular() -> bool:
     """
@@ -77,7 +85,6 @@ def isfirstbar_regular() -> bool:
 
 # noinspection PyProtectedMember
 # TODO: implement this when extended session will be supported
-@export
 @module_property
 def isfirstbar() -> bool:
     """
@@ -99,7 +106,6 @@ def isfirstbar() -> bool:
 
 
 # noinspection PyProtectedMember
-@export
 @module_property
 def islastbar_regular() -> bool:
     """
@@ -119,7 +125,6 @@ def islastbar_regular() -> bool:
 
 
 # noinspection PyProtectedMember
-@export
 @module_property
 def islastbar() -> bool:
     """
@@ -140,7 +145,6 @@ def islastbar() -> bool:
 
 
 # noinspection PyProtectedMember
-@export
 @module_property
 def ismarket() -> bool:
     """
@@ -152,7 +156,6 @@ def ismarket() -> bool:
     return _check_session(lib._datetime, tf_sec)
 
 
-@export
 @module_property
 def ispremarket() -> bool:
     """
@@ -165,7 +168,6 @@ def ispremarket() -> bool:
     return False
 
 
-@export
 @module_property
 def ispostmarket() -> bool:
     """

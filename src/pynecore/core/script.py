@@ -22,6 +22,10 @@ from pynecore.types.source import Source
 from . import safe_convert
 
 
+# Global registry for library main functions
+_registered_libraries: list[tuple[str, Callable]] = []
+
+
 @dataclass(kw_only=True)
 class InputData:
     """
@@ -469,7 +473,14 @@ class Script:
         script.overlay = overlay
         script.dynamic_requests = dynamic_requests
 
-        return script._decorate()
+        def decorator(func):
+            # Register library main function if not already registered
+            lib_entry = (script.title or 'Untitled Library', func)
+            if lib_entry not in _registered_libraries:
+                _registered_libraries.append(lib_entry)
+            return script._decorate()(func)
+        
+        return decorator
 
 
 script = Script

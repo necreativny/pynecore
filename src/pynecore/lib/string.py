@@ -7,7 +7,6 @@ from datetime import datetime, UTC
 from decimal import Decimal, ROUND_HALF_UP
 
 from ..types.na import NA
-from ..utils.export import export
 
 from ..types.format import Format
 from . import format as _format
@@ -16,6 +15,9 @@ from .. import lib
 from ..core import safe_convert
 
 from pynecore.core.datetime import parse_timezone as _parse_timezone
+
+__all__ = ['contains', 'endswith', 'format', 'format_time', 'length', 'lower', 'match', 'pos', 'repeat', 'replace',
+           'replace_all', 'split', 'startswith', 'substring', 'tonumber', 'tostring', 'trim', 'upper']
 
 
 #
@@ -224,7 +226,6 @@ def _datatime_fmt_tv2py(fmt: str) -> str:
 # Exported functions
 #
 
-@export
 def contains(source: str, str_: str) -> bool:
     """
     Returns true if the source string contains the str substring, false otherwise.
@@ -236,7 +237,6 @@ def contains(source: str, str_: str) -> bool:
     return str_ in source
 
 
-@export
 def endswith(source: str, str_: str) -> bool:
     """
     Returns true if the source string ends with the substring specified in str, false otherwise.
@@ -249,7 +249,6 @@ def endswith(source: str, str_: str) -> bool:
 
 
 # noinspection PyPep8Naming,PyShadowingBuiltins
-@export
 def format(formatString: str, *args: Any) -> str:
     """
     Converts the formatting string and value(s) into a formatted string.
@@ -337,7 +336,6 @@ def format(formatString: str, *args: Any) -> str:
 
 
 # noinspection PyProtectedMember
-@export
 def format_time(time: int, fmt: str | None = None, tz: str | None = None) -> str:
     """
     Format timestamp according to format string and timezone
@@ -362,7 +360,6 @@ def format_time(time: int, fmt: str | None = None, tz: str | None = None) -> str
     return dt.strftime(py_fmt)
 
 
-@export
 def length(string: str) -> int:
     """
     Returns an integer corresponding to the amount of chars in that string.
@@ -373,7 +370,6 @@ def length(string: str) -> int:
     return len(string)
 
 
-@export
 def lower(source: str) -> str:
     """
     Returns a new string with all letters converted to lowercase.
@@ -384,7 +380,6 @@ def lower(source: str) -> str:
     return source.lower()
 
 
-@export
 def match(source: str, regex: str) -> str:
     """
     Returns the new substring of the source string if it matches a regex regular expression, an empty string otherwise.
@@ -399,7 +394,6 @@ def match(source: str, regex: str) -> str:
     return m.group()
 
 
-@export
 def pos(source: str, str_: str) -> int | NA[int]:
     """
     Returns the position of the first occurrence of the str string in the source string, 'na' otherwise.
@@ -415,7 +409,6 @@ def pos(source: str, str_: str) -> int | NA[int]:
 
 
 # noinspection PyShadowingNames
-@export
 def repeat(source: str, repeat: int, separator: str = '') -> str:
     """
     Returns a new string consisting of the source string repeated the specified number of times,
@@ -430,7 +423,6 @@ def repeat(source: str, repeat: int, separator: str = '') -> str:
     return separator.join([source] * repeat)
 
 
-@export
 def replace(source: str, target: str, replacement: str, occurence=0) -> str:
     """
     Replaces the nth occurence of target string with the replacement string in the source string.
@@ -451,7 +443,6 @@ def replace(source: str, target: str, replacement: str, occurence=0) -> str:
     return p1 + replacement + p2
 
 
-@export
 def replace_all(source: str, target: str, replacement: str) -> str:
     """
     Replaces each occurrence of the target string in the source string with the replacement string.
@@ -464,7 +455,6 @@ def replace_all(source: str, target: str, replacement: str) -> str:
     return source.replace(target, replacement)
 
 
-@export
 def split(string: str, separator: str) -> list[str]:
     """
     Divides a string into an array of substrings and returns its array id.
@@ -476,7 +466,6 @@ def split(string: str, separator: str) -> list[str]:
     return string.split(separator)
 
 
-@export
 def startswith(source: str, str_: str) -> bool:
     """
     Returns true if the source string starts with the str substring, false otherwise.
@@ -488,7 +477,6 @@ def startswith(source: str, str_: str) -> bool:
     return source.startswith(str_)
 
 
-@export
 def substring(source: str, begin_pos: int, end_pos: int | None = None) -> str:
     """
     Returns a substring of the source string starting at the specified position and ending at the specified position.
@@ -508,7 +496,6 @@ def substring(source: str, begin_pos: int, end_pos: int | None = None) -> str:
     return source[begin_pos:end_pos]
 
 
-@export
 def tonumber(string: str) -> float | NA[float]:
     """
     Converts a value represented in string to its "float" equivalent, or `na` if the conversion is not possible.
@@ -523,7 +510,6 @@ def tonumber(string: str) -> float | NA[float]:
 
 
 # noinspection PyShadowingBuiltins,PyShadowingNames
-@export
 def tostring(value: int | float | str | bool | NA, fmt: str | Format = '#.##########') -> str:
     """
     Convert value to string with optional formatting.
@@ -546,7 +532,6 @@ def tostring(value: int | float | str | bool | NA, fmt: str | Format = '#.######
     return str(value)
 
 
-@export
 def trim(source: str) -> str:
     """
     Removes leading and trailing whitespaces from the source string.
@@ -557,7 +542,6 @@ def trim(source: str) -> str:
     return source.strip()
 
 
-@export
 def upper(source: str) -> str:
     """
     Returns a new string with all letters converted to uppercase.

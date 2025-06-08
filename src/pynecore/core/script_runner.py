@@ -323,6 +323,11 @@ class ScriptRunner:
                 if is_strat and position:
                     position.process_orders()
 
+                # Execute registered library main functions before main script
+                from . import script
+                for library_title, main_func in script._registered_libraries:
+                    main_func()
+
                 # Run the script
                 res = self.script_module.main()
 
