@@ -86,6 +86,9 @@ _script: script | None = None
 # Stores data to polot
 _plot_data: dict[str, Any] = {}
 
+# Lib semaphore - to prevent lib`s main function to do things it must not (plot, strategy things, etc.)
+_lib_semaphore = False
+
 
 #
 # Functions
@@ -244,6 +247,9 @@ class _Plot:
                       number will be appended
         :return: The a Plot object, can be used to reference the plot in other functions
         """
+        if _lib_semaphore:
+            return Plot(title)
+
         if bar_index == 0:  # Only check if it is the first bar for performance reasons
             # Check if it is called from the main function
             if sys._getframe(1).f_code.co_name != 'main':  # noqa

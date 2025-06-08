@@ -21,7 +21,6 @@ __all__ = ['script', 'input']
 from pynecore.types.source import Source
 from . import safe_convert
 
-
 # Global registry for library main functions
 _registered_libraries: list[tuple[str, Callable]] = []
 
@@ -479,7 +478,7 @@ class Script:
             if lib_entry not in _registered_libraries:
                 _registered_libraries.append(lib_entry)
             return script._decorate()(func)
-        
+
         return decorator
 
 

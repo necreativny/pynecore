@@ -700,13 +700,16 @@ def _price_round(price: float | NA[float], direction: int | float) -> float | NA
     return int(ppmt) * mintick if direction < 0 else (int(ppmt) + 1) * mintick
 
 
-# noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins,PyProtectedMember
 def cancel(id: str):
     """
     Cancels a pending or unfilled order with a specific identifier
 
     :param id: The identifier of the order to cancel
     """
+    if lib._lib_semaphore:
+        return
+
     try:
         assert lib._script is not None and lib._script.position is not None
         # noinspection PyProtectedMember
@@ -720,6 +723,9 @@ def cancel_all():
     """
     Cancels all pending or unfilled orders
     """
+    if lib._lib_semaphore:
+        return
+
     assert lib._script is not None and lib._script.position is not None
     lib._script.position.orders.clear()
 
@@ -739,6 +745,9 @@ def close(id: str, comment: str | NA[str] = NA(str), qty: float | NA[float] = NA
     :param alert_message: Custom text for the alert that fires when an order fills.
     :param immediately: If true, the closing order executes on the same tick when the strategy places it
     """
+    if lib._lib_semaphore:
+        return
+
     assert lib._script is not None and lib._script.position is not None
     position = lib._script.position
 
@@ -778,6 +787,9 @@ def close_all(comment: str | NA[str] = NA(str), alert_message: str | NA[str] = N
     :param alert_message: Custom text for the alert that fires when an order fills
     :param immediately: If true, the closing order executes on the same tick when the strategy places it
     """
+    if lib._lib_semaphore:
+        return
+
     assert lib._script is not None and lib._script.position is not None
     position = lib._script.position
     if position.size == 0.0:
@@ -811,6 +823,9 @@ def entry(id: str, direction: _direction.Direction, qty: int | float | NA[float]
     :param comment: Additional notes on the filled order
     :param alert_message: Custom text for the alert that fires when an order fills
     """
+    if lib._lib_semaphore:
+        return
+
     script = lib._script
     assert script is not None and script.position is not None
 
@@ -902,6 +917,8 @@ def exit(id: str, from_entry: str | NA[str] = NA(str),
     :param alert_trailing: Custom text for the alert that fires when an order fills
     :param disable_alert: If true, the alert will not fire when the order fills
     """
+    if lib._lib_semaphore:
+        return
 
     script = lib._script
     assert script is not None and script.position is not None
